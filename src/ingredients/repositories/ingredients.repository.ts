@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DynamoService } from '../../database/dynamodb/dynamo.service';
 import { Ingredient } from '../entities/ingredient.entity';
-import { QueryCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { ScanCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 @Injectable()
 export class IngredientsRepository {
@@ -11,11 +11,10 @@ export class IngredientsRepository {
   async findAll() {
     try {
       const result = await this.dynamo.client.send(
-        new QueryCommand({
+        new ScanCommand({
           TableName: this.tableName,
         }),
       );
-      console.log(JSON.stringify(result, null, 2));
       return result;
     } catch (e) {
       console.error(e);
