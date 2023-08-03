@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 
-@Controller('recipe')
+@Controller('recipes')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
@@ -17,7 +17,7 @@ export class RecipeController {
   }
 
   @Post()
-  create(@Body() recipe: CreateRecipeDto) {
+  async create(@Body() recipe: CreateRecipeDto) {
     return this.recipeService.create(recipe);
   }
 }

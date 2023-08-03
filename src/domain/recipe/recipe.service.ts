@@ -12,9 +12,7 @@ export class RecipeService {
   ) {}
 
   async create(payload: CreateRecipeDto) {
-    await this.ingredientValidator.validate(
-      payload.ingredients.map((ingredient) => ingredient.id),
-    );
+    await this.ingredientValidator.validate(payload.ingredients);
     const newIngredient = Recipe.build(payload);
     const ingredient = await this.recipeRepository.create(newIngredient);
 
