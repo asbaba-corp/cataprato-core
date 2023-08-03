@@ -2,7 +2,7 @@ name: "Terraform Plan"
 
 on:
   pull_request:
-    types: [open, reopen]
+    types: [opened, reopened]
   workflow_call:
     inputs:
       config_directory:
