@@ -9,6 +9,16 @@ export class DynamoService {
 
   constructor(private configService: AppConfigService) {
     const dynamoConfig = this.configService.awsDynamoConfig;
-    this.client = DynamoDBDocumentClient.from(new DynamoDBClient(dynamoConfig));
+
+    this.client = DynamoDBDocumentClient.from(
+      new DynamoDBClient({
+        region: dynamoConfig.region,
+        credentials: {
+          accessKeyId: dynamoConfig.credentials.accessKeyId,
+          secretAccessKey: dynamoConfig.credentials.secretAccessKey,
+          sessionToken: dynamoConfig.credentials.sessionToken,
+        },
+      }),
+    );
   }
 }

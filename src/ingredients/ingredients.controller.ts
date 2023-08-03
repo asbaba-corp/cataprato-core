@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
 import { IngredientsService } from './ingredients.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 
@@ -8,8 +7,8 @@ export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Get()
-  findAll() {
-    return this.ingredientsService.findAll();
+  async findAll() {
+    return await this.ingredientsService.findAll();
   }
 
   @Post('')

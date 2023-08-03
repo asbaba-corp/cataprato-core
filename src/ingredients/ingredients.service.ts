@@ -15,6 +15,7 @@ export class IngredientsService {
   }
 
   async findAll() {
+    console.log('service');
     const response = await this.ingredientsRepository.findAll();
     return response;
   }

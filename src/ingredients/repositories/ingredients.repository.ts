@@ -5,7 +5,7 @@ import { QueryCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 @Injectable()
 export class IngredientsRepository {
-  tableName = 'ingredients';
+  tableName = 'Users';
   constructor(private readonly dynamo: DynamoService) {}
 
   async findAll() {
@@ -15,9 +15,10 @@ export class IngredientsRepository {
           TableName: this.tableName,
         }),
       );
-
+      console.log(JSON.stringify(result, null, 2));
       return result;
     } catch (e) {
+      console.error(e);
       throw new InternalServerErrorException();
     }
   }
