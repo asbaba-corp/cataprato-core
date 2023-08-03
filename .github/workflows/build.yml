@@ -1,35 +1,71 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: Build Node.js
 
-on: workflow_call
+on: 
+  pull_request:
+    types: [opened, reopened]
+  workflow_call:
+    inputs:
+      runs-on:
+        description: The Platform to execute on
+        type: string
+        default: ubuntu-latest
+      node-version:
+        description: The version of node to be used
+        type: string
+        default: 18.x
+      project-folder:
+        description: The folder containing the project to build
+        type: string
+        default: .
+  
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    defaults:
+      run:
+        working-directory: .
 
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - run: echo ${{env}}
+    - run: echo inputs ${{inputs}}
+    - run: echo inputs ${{github.event.inputs}}
+    - uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: rm -rf node_modules package-lock.json
-    - run: npm i --legacy-peer-deps
-    - run: npm run build --if-present
-    - run: ls
-          
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v3
+        node-version: 18.x
+        check-latest: true
+
+    - name: Cache node modules
+      id: cache-npm
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-node-modules
       with:
-        name: dist
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      name: List the state of node modules
+      continue-on-error: true
+      run: npm list
+
+    - name: Install dependencies
+      run: npm ci --legacy-peer-deps
+
+    - name: Build
+      run: npm run build  --if-present 
+           
+    - name: Upload a Build Artifact
+      uses: Actions/upload-artifact@v2.2.2
+      with:
+        name: build-${{ github.event.number }}
         path: dist
-    - run: cd dist && ls
+        if-no-files-found: error
+
+    - name: Zip Files
+      run: zip -qq r dist.zip dist

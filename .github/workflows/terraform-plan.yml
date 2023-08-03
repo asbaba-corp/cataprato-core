@@ -1,31 +1,33 @@
 name: "Terraform Plan"
 
-on: workflow_call 
-
-env:
-  TF_CLOUD_ORGANIZATION: "Cataprato"
-  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-  TF_WORKSPACE: "cataprato-workspace"
-  CONFIG_DIRECTORY: "./terraform"
+on: 
+  workflow_call:
+    inputs:
+      config_directory:
+        required: true
+        type: string
 
 jobs:
   plan:
     name: "Terraform Plan"
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    defaults:
-      run:
-        working-directory: ${{ env.CONFIG_DIRECTORY }}
     steps:
-
-      - uses: actions/checkout@v3        
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: tree      
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-${{ github.event.number }}
+          path: dist
 
+      - name: Zip Files
+        run: zip -qq -r dist.zip dist  
       - name: Terraform fmt
         id: fmt
         run: terraform fmt 
@@ -34,15 +36,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
-        
-      - uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: dist
-
-      - name: Zip Files
-        run: cd .. && zip -qq -r ./terraform/dist.zip dist 
-        
+                
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
@@ -89,3 +83,6 @@ jobs:
               body: output
             })
             }
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1

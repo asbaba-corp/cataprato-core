@@ -1,50 +1,40 @@
 name: "Terraform Apply"
 
-on: workflow_dispatch 
-env:
-  TF_CLOUD_ORGANIZATION: "Cataprato"
-  TF_WORKSPACE: "cataprato-workspace"
-  CONFIG_DIRECTORY: "./terraform"
-  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-  
+on: 
+  workflow_call:
+    inputs:
+      terraform-version:
+        default: 1.5.0
+        type: string
+        
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
-
-  plan:
-    uses: ./.github/workflows/terraform-plan.yml
-    needs: [build]
-    secrets: inherit
-   
-  Terraform-apply:
+  apply:
     name: "Terraform Apply"
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    needs: [plan]
     steps:
-    
-      - uses: actions/checkout@v3
+      - run: actions/checkout@v3
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-                     
+          terraform_version: ${{inputs.terraform-version}}
+
       - uses: actions/download-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: build-${{ github.event.number }}
+          path: ${{ inputs.project-folder }}
 
       - name: Zip Files
         run: zip -qq -r ./terraform/dist.zip dist  
-        
-      - name: Tree
-        run: tree
-        
-      - name: Apply
-        id: apply
-        run: cd terraform && terraform init && terraform apply -input=false -auto-approve
+         
+      - name: Terraform apply
+        if: github.event.pull_request.merged == true && success()
+        continue-on-error: true
+        run: |
+          terraform apply -input=false -auto-approve -no-color
 
 
 
