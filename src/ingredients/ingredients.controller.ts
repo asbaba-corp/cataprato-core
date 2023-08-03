@@ -11,7 +11,7 @@ export class IngredientsController {
     return await this.ingredientsService.findAll();
   }
 
-  @Post('')
+  @Post()
   create(@Body() ingredient: CreateIngredientDto) {
     return this.ingredientsService.create(ingredient);
   }
