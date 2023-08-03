@@ -32,7 +32,7 @@ module "lambda_function" {
   version = "5.3.0"
 
   function_name          = "cataprato-core-lambda"
-  description            = "My awesome lambda function"
+  description            = "Cataprato core"
   handler                = "lambda.handler"
   runtime                = "nodejs18.x"
   ephemeral_storage_size = 512
@@ -111,8 +111,8 @@ module "lambda_layer_s3" {
 
   create_layer = true
 
-  layer_name          = "$cataprato-core-layer-s3"
-  description         = "My amazing lambda layer (deployed from S3)"
+  layer_name          = "cataprato-core-layer-s3"
+  description         = "Node_modules layer"
   compatible_runtimes = ["nodejs18.x"]
 
   source_path = "${path.module}/dist"
