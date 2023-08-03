@@ -1,8 +1,7 @@
 name: "Terraform Apply"
 
 on:
-  pull_request:
-    types: [open, reopen]
+  
   workflow_call:
     inputs:
       terraform-version:
