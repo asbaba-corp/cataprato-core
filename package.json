@@ -33,6 +33,7 @@
     "aws-lambda": "^1.0.7",
     "aws-serverless-express": "^3.4.0",
     "cache-manager": "^5.2.3",
+    "p-queue": "^7.3.4",
     "pg": "^8.11.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",

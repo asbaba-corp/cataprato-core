@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { IngredientModule } from './ingredients/ingredients.module';
+import { IngredientModule } from './domain/ingredients/ingredients.module';
 import { AppController } from './app.controller';
 import { DynamoModule } from './database/dynamodb/dynamo.module';
 import { ConfigModule } from '@nestjs/config';

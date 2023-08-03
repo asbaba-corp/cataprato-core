@@ -8,15 +8,19 @@ export class IngredientsService {
   constructor(private ingredientsRepository: IngredientsRepository) {}
 
   async create(payload: CreateIngredientDto) {
-    const ingredient = Ingredient.build(payload);
-    const response = await this.ingredientsRepository.create(ingredient);
+    const newIngredient = Ingredient.build(payload);
+    const ingredient = await this.ingredientsRepository.create(newIngredient);
 
-    return response;
+    return ingredient;
   }
 
   async findAll() {
-    console.log('service');
-    const response = await this.ingredientsRepository.findAll();
-    return response;
+    const ingredients = await this.ingredientsRepository.findAll();
+    return ingredients;
+  }
+
+  async findOne(id: string) {
+    const ingredient = await this.ingredientsRepository.findOne(id);
+    return ingredient;
   }
 }
