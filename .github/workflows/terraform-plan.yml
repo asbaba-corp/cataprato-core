@@ -13,6 +13,8 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       TF_WORKSPACE: "cataprato-workspace"
+      TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3     
@@ -28,18 +30,13 @@ jobs:
           name: build-${{ github.event.number }}
           path: dist
           
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt 
-        continue-on-error: true
-
-      - name: Terraform Init
-        id: init
-        run: terraform init
-                
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        id: plan-upload
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ inputs.config_directory }}
+          speculative: true
         
       - name: Create Plan Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
