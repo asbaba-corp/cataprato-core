@@ -13,16 +13,16 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       TF_WORKSPACE: "cataprato-workspace"
-      TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+      TF_API_TOKEN: "${{ env.TF_API_TOKEN }}"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3     
       
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+     # - name: Setup Terraform
+     #   uses: hashicorp/setup-terraform@v2
+     #   with:
+     #     cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       
       - name: Download Artifact
         uses: actions/download-artifact@v3
