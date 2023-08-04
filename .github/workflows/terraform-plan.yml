@@ -42,19 +42,15 @@ jobs:
         id: plan
         run: |
             plan_info=""
-            dir_count=`ls -l | grep "^d" | wc -l`
             
-            if [ $dir_count -gt 0 ]; then
-              plan_info="$(terraform plan)"
-            else
-              plan_info="$(terraform plan)"
-            fi
-            
-           # plan_info="${plan_info//'%'/'%25'}"
-           # plan_info="${plan_info//$'\n'/'%0A'}"
-          #  plan_info="${plan_info//$'\r'/'%0D'}"
+            plan_info="$(terraform plan)"
             
             echo "::set-output name=plan_info::$plan_info"
+
+           # plan_info="${plan_info//'%'/'%25'}"
+           # plan_info="${plan_info//$'\n'/'%0A'}"
+           # plan_info="${plan_info//$'\r'/'%0D'}"
+            
         continue-on-error: true
       
       - name: Update PR
