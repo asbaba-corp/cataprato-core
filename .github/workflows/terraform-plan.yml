@@ -41,15 +41,21 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-            plan_info=""
-            
-            plan_info="$(terraform plan -no-color)"
-            
+          plan_info=""
 
-            plan_info="${plan_info//'%'/'%25'}"
-            plan_info="${plan_info//$'\n'/'%0A'}"
-            plan_info="${plan_info//$'\r'/'%0D'}"
-            echo "::set-output name=plan_info::$plan_info"
+          dir_count=`ls -l | grep "^d" | wc -l`
+          
+          if [ $dir_count -gt 0 ]; then
+            plan_info="$(terraform plan -no-color)"
+          else
+            plan_info="$(terraform plan -no-color)"
+          fi
+          
+          plan_info="${plan_info//'%'/'%25'}"
+          plan_info="${plan_info//$'\n'/'%0A'}"
+          plan_info="${plan_info//$'\r'/'%0D'}"
+          
+          echo "::set-output name=plan_info::$plan_info"
 
         continue-on-error: true
       
