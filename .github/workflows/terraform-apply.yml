@@ -11,8 +11,8 @@ on:
         
 
 jobs:
-  apply:
-    name: "Terraform Apply"
+  terraform:
+    name: "Apply"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,13 +25,14 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
           terraform_version: ${{inputs.terraform-version}}
-
+          
+      - name: Download artifact
       - uses: actions/download-artifact@v3
         with:
           name: build-${{ github.event.number }}
           path: ${{ inputs.project-folder }}
          
-      - name: Terraform apply
+      - name: Provision infra
         if: github.event.pull_request.merged == true && success()
         continue-on-error: true
         run: |

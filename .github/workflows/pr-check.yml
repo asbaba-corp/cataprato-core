@@ -1,0 +1,18 @@
+name: Pull Request Check
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  build:
+    name: Nodejs
+    uses: ./.github/workflows/build.yml
+    with:
+      runs-on: "ubuntu-latest"
+  plan:
+    needs: [build]
+    uses: ./.github/workflows/terraform-plan.yml
+    with:
+      config_directory: "/terraform"
+    secrets: inherit
