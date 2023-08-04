@@ -43,7 +43,7 @@ jobs:
         id: plan-run
         continue-on-error: true
         run: |
-          terraform plan -input=false 
+         terraform init && terraform plan -input=false 
       
       - run: echo ${{steps.plan-run.outputs.payload}}
       - name: Update PR
