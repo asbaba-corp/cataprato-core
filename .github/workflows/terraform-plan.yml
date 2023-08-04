@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TF_WORKSPACE: "cataprato-workspace"
+      TF_WORKSPACE: "Cataprato"
       TF_API_TOKEN: "${{ vars.TF_API_TOKEN }}"
 
     steps:
