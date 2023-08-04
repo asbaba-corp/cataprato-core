@@ -13,7 +13,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       TF_WORKSPACE: "cataprato-workspace"
-      TF_API_TOKEN: "${{ env.TF_API_TOKEN }}"
+      TF_API_TOKEN: "${{ vars.TF_API_TOKEN }}"
 
     steps:
       - name: Checkout
