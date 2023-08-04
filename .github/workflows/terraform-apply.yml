@@ -27,7 +27,7 @@ jobs:
           terraform_version: ${{inputs.terraform-version}}
           
       - name: Download artifact
-      - uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: build-${{ github.event.number }}
           path: ${{ inputs.project-folder }}
