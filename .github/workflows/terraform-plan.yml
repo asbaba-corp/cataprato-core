@@ -10,20 +10,14 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TF_WORKSPACE: "cataprato-workspace"
-      TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-      TF_CLOUD_ORGANIZATION: "Cataprato"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3     
       
-     # - name: Setup Terraform
-     #   uses: hashicorp/setup-terraform@v2
-     #   with:
-     #     cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       
       - name: Download Artifact
         uses: actions/download-artifact@v3
@@ -31,56 +25,69 @@ jobs:
           name: build-${{ github.event.number }}
           path: dist
           
-      - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
-        id: plan-upload
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          directory: ${{ inputs.config_directory }}
-          speculative: true
-        
-      - name: Plan Terraform
-        id: plan-run
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt 
         continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+                
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
         run: |
-         terraform init && terraform plan -input=false 
+          plan_info=""
+          dir_count=`ls -l | grep "^d" | wc -l`
+          if [ $dir_count -gt 0 ]; then
+            for dir in ./*/
+            do
+              env=${dir%*/}
+              env=${env#*/}
+              echo ""
+              echo "========> Terraform Plan <========"
+              echo "At environment: ${{ github.head_ref    }}"
+              echo "At workspace: ${env}"
+              echo "=================================="
+              terraform workspace select ${env} || terraform workspace new ${env}
+              plan_info="$plan_info\n$(terraform plan -no-color)"
+            done
+          else
+            plan_info="$(terraform plan -no-color)"
+          fi
+          plan_info="${plan_info//'%'/'%25'}"
+          plan_info="${plan_info//$'\n'/'%0A'}"
+          plan_info="${plan_info//$'\r'/'%0D'}"
+          echo "::set-output name=plan_info::$plan_info"
+        continue-on-error: true
       
-      - run: echo ${{steps.plan-run.outputs.payload}}
       - name: Update PR
         uses: actions/github-script@v6
         id: plan-comment
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // 1. Retrieve existing bot comments for the PR
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-            const botComment = comments.find(comment => {
-              return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output')
-            });
-            const output = `#### Terraform Cloud Plan Output
-                \`\`\`
-                ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
-                \`\`\`
-                \`\`\`
-                Plan: ${{ steps.plan-output.outputs.add }} to add, ${{ steps.plan-output.outputs.change }} to change, ${{ steps.plan-output.outputs.destroy }} to destroy.
-                \`\`\`
-                [Terraform Cloud Plan](${{ steps.plan-run.outputs.run_link }})
-                `;
-            // 3. Delete previous comment so PR timeline makes sense
-            if (botComment) {
-              github.rest.issues.deleteComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-              });
-            }
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            <details><summary>Show Plan</summary>
+            \`\`\`\n
+            ${{ steps.plan.outputs.plan_info }}
+            \`\`\`
+            </details>
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: output
-            });
+            })
+            
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
