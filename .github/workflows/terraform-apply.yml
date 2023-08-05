@@ -30,7 +30,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-${{ github.event.number }}
-          path: ${{ inputs.project-folder }}
+          path: dist
          
       - name: Provision infra
         if: github.event.pull_request.merged == true && success()
