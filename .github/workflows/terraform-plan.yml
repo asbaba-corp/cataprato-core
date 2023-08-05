@@ -42,7 +42,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -input=false |& tee tf_plan.txt
+        run: terraform plan -input=false |& tee tf_plan.txt && exit 0
        
       - uses: GetTerminus/terraform-pr-commenter@v3
         with:
