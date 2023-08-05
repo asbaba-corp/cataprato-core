@@ -64,7 +64,7 @@ module "lambda_function" {
   allowed_triggers = {
     APIGatewayAny = {
       service    = "apigateway"
-      source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:aqnku8akd0/*/*/*"
+      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/*"
     }
   }
 
@@ -121,16 +121,11 @@ module "lambda_layer_s3" {
   s3_bucket   = module.s3_bucket.s3_bucket_id
 }
 
-
-resource "random_pet" "this" {
-  length = 2
-}
-
 module "s3_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "3.14.1"
 
-  bucket_prefix = "${random_pet.this.id}-"
+  bucket_prefix = "cataprato-core-"
   force_destroy = true
 
   block_public_acls       = true
@@ -141,4 +136,33 @@ module "s3_bucket" {
   versioning = {
     enabled = true
   }
+}
+
+module "api_gateway" {
+  source  = "terraform-aws-modules/apigateway-v2/aws"
+  version = "~> 2.0"
+
+  name          = "cataprato-http"
+  description   = "Api gateway for cataprato corporations"
+  protocol_type = "HTTP"
+
+  create_api_domain_name = false
+
+  cors_configuration = {
+    allow_headers = ["content-type", "x-amz-date", "authorization", "x-api-key", "x-amz-security-token", "x-amz-user-agent"]
+    allow_methods = ["*"]
+    allow_origins = ["*"]
+  }
+
+  integrations = {
+    "ANY /" = {
+      lambda_arn             = module.lambda_function.lambda_function_arn
+      payload_format_version = "2.0"
+    }
+  }
+
+#  tags = {
+#    Pattern = "terraform-apigw-http-lambda"
+#    Module  = "api_gateway"
+#  }
 }
