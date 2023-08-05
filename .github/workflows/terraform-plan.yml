@@ -38,7 +38,15 @@ jobs:
                 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: terraform validate
+        
+      - name: Post TF Validate Comment
+        if: ${{ always() && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure') }}
+        uses: GetTerminus/terraform-pr-commenter@v3
+        with:
+          commenter_type: validate
+          commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
+          commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
 
       - name: Terraform Plan
         id: plan
