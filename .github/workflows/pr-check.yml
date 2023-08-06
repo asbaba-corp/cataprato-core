@@ -4,5 +4,5 @@ on: pull_request
   
 jobs:
   check:
-    uses: asbaba-corp/pipelines/.github/workflows/pr-check.yml@main
+    uses: asbaba-corp/pipelines/.github/workflows/pr-check-nodejs.yml@main
     secrets: inherit       
