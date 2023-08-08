@@ -143,5 +143,5 @@ module "s3_bucket" {
   }
 }
 data "aws_apigatewayv2_api" "cataprato-apigateway" {
-  api_id = "cataprato-http"
+  api_id = "69aqdd02bl"
 }
