@@ -64,7 +64,7 @@ module "lambda_function" {
   allowed_triggers = {
     APIGatewayAny = {
       service    = "apigateway"
-      source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${data.aws_apigatewayv2_apis.cataprato-apigateway.ids[]}/*/*/*"
+      source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${data.aws_apigatewayv2_apis.cataprato-apigateway.ids[0]}/*/*/*"
     }
   }
 arn:partition:execute-api:region:account-id:api-id/stage/http-method/resource-path
