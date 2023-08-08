@@ -67,7 +67,6 @@ module "lambda_function" {
       source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${data.aws_apigatewayv2_apis.cataprato-apigateway.ids[0]}/*/*/*"
     }
   }
-arn:partition:execute-api:region:account-id:api-id/stage/http-method/resource-path
 
   create_lambda_function_url = true
   authorization_type         = "AWS_IAM"
