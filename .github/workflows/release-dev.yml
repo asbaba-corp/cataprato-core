@@ -7,18 +7,10 @@ on:
       - main
 
 jobs:
-  build:
-    name: Nodejs
-    uses: ./.github/workflows/build.yml
-    with:
-      runs-on: "ubuntu-latest"
-  terraform-plan:
-    needs: [build]
-    uses: ./.github/workflows/terraform-plan.yml
-    with:
-      config_directory: "/terraform"
-    secrets: inherit
-  terraform-apply:
-    needs: [terraform-plan]
-    uses: ./.github/workflows/terraform-apply.yml 
-    secrets: inherit
+    check:
+      uses: asbaba-corp/pipelines/.github/workflows/release-dev.yml@main
+      with:
+        repository_language: "nodejs"
+        module: "core"
+      secrets: inherit   
+      

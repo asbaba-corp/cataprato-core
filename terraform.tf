@@ -9,7 +9,7 @@ terraform {
     organization = "Cataprato"
 
     workspaces {
-      name = "cataprato-workspace"
+      name = "cataprato-core"
     }
   }
 }
