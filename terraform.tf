@@ -113,7 +113,7 @@ module "lambda_function" {
   description         = "Node_modules layer"
   compatible_runtimes = ["nodejs18.x"]
 
-  source_path = "${path.module}/dist"
+  source_path = "${path.module}/node"
 
   store_on_s3 = true
   s3_bucket   = module.s3_bucket.s3_bucket_id
