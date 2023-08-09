@@ -35,11 +35,10 @@ module "lambda_function" {
   description            = "Cataprato core"
   handler                = "lambda.handler"
   runtime                = "nodejs18.x"
-  ephemeral_storage_size = 512
   architectures          = ["x86_64"]
   publish                = true
 
-  source_path = "${path.module}/dist"
+  source_path = "${path.module}/app"
 
   store_on_s3 = true
   s3_bucket   = module.s3_bucket.s3_bucket_id
