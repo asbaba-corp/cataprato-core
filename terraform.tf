@@ -114,7 +114,6 @@ module "lambda_function" {
   description         = "Node_modules layer"
   compatible_runtimes = ["nodejs18.x"]
 
-  source_path = 
   source_path = [
     {
       path             = "${path.module}/dist/node/"
