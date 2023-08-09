@@ -5,6 +5,7 @@ import { Ingredient } from '../../ingredients/entities/ingredient.entity';
 export class Recipe {
   id: string;
   ingredients: Ingredient[];
+  name: string;
   creator: string;
   private constructor(private readonly recipe: CreateRecipeDto) {
     this.id = randomUUID();
