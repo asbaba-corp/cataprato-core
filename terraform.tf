@@ -116,7 +116,7 @@ module "lambda_function" {
 
   source_path = [
     {
-      path             = "${path.module}/dist/node/"
+      path             = "${path.module}/dist/function/"
       npm_requirements = true
     }
   ]
