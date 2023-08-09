@@ -108,13 +108,19 @@ module "lambda_function" {
   version = "5.3.0"
 
   create_layer = true
+  create_function = false
 
   layer_name          = "cataprato-core-layer-s3"
   description         = "Node_modules layer"
   compatible_runtimes = ["nodejs18.x"]
 
-  source_path = "${path.module}/dist/node/"
-  
+  source_path = 
+  source_path = [
+    {
+      path             = "${path.module}/dist/node/"
+      npm_requirements = true
+    }
+  ]
   store_on_s3 = true
   s3_bucket   = module.s3_bucket.s3_bucket_id
 } 
