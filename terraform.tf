@@ -113,7 +113,7 @@ module "lambda_function" {
   layer_name          = "cataprato-core-layer-s3"
   description         = "Node_modules layer"
   compatible_runtimes = ["nodejs18.x"]
-
+  runtime = "nodejs18.x"
   source_path = [
     {
       path             = "${path.module}/dist/function/"
