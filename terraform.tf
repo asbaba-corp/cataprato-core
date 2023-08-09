@@ -47,9 +47,9 @@ module "lambda_function" {
 
   artifacts_dir = "${path.root}/.terraform/lambda-builds/"
 
-/*   layers = [
+  layers = [
     module.lambda_layer_s3.lambda_layer_arn,
-  ] */
+  ] 
 
  /*  environment_variables = {
     Hello      = "World"
@@ -104,7 +104,7 @@ module "lambda_function" {
   } */
 }
 
-/* module "lambda_layer_s3" {
+ module "lambda_layer_s3" {
    source  = "terraform-aws-modules/lambda/aws"
   version = "5.3.0"
 
@@ -118,7 +118,7 @@ module "lambda_function" {
 
   store_on_s3 = true
   s3_bucket   = module.s3_bucket.s3_bucket_id
-} */
+} 
 
 
 
