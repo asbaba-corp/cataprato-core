@@ -1,6 +1,7 @@
 name: Release Dev Workflow
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [closed]
     branches:
@@ -11,6 +12,5 @@ jobs:
       uses: asbaba-corp/pipelines/.github/workflows/release-dev.yml@main
       with:
         repository_language: "nodejs"
-        module: "core"
       secrets: inherit   
       
