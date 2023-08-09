@@ -35,11 +35,10 @@ module "lambda_function" {
   description            = "Cataprato core"
   handler                = "lambda.handler"
   runtime                = "nodejs18.x"
-  ephemeral_storage_size = 512
   architectures          = ["x86_64"]
   publish                = true
 
-  source_path = "${path.module}/dist"
+  source_path = "${path.module}/dist/app"
 
   store_on_s3 = true
   s3_bucket   = module.s3_bucket.s3_bucket_id
@@ -47,9 +46,9 @@ module "lambda_function" {
 
   artifacts_dir = "${path.root}/.terraform/lambda-builds/"
 
-/*   layers = [
+  layers = [
     module.lambda_layer_s3.lambda_layer_arn,
-  ] */
+  ] 
 
  /*  environment_variables = {
     Hello      = "World"
@@ -104,7 +103,7 @@ module "lambda_function" {
   } */
 }
 
-/* module "lambda_layer_s3" {
+ module "lambda_layer_s3" {
    source  = "terraform-aws-modules/lambda/aws"
   version = "5.3.0"
 
@@ -114,11 +113,11 @@ module "lambda_function" {
   description         = "Node_modules layer"
   compatible_runtimes = ["nodejs18.x"]
 
-  source_path = "${path.module}/dist"
+  source_path = "${path.module}/dist/node"
 
   store_on_s3 = true
   s3_bucket   = module.s3_bucket.s3_bucket_id
-} */
+} 
 
 
 
