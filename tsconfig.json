@@ -18,6 +18,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "tsBuildInfoFile": ".tsbuildinfo",
+    "esModuleInterop": true
   },
   "buildOptions": {
     "traceResolution": true

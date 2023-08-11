@@ -11,6 +11,7 @@ export async function createApp(
     AppModule,
     new ExpressAdapter(expressApp),
   );
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
