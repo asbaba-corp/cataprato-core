@@ -116,7 +116,7 @@ module "lambda_function" {
   runtime = "nodejs18.x"
   source_path = [
     {
-      path             = "${path.module}/dist/function/"
+      path             = "${path.module}/dist/function"
       npm_requirements = true
     }
   ]
