@@ -60,12 +60,12 @@ module "lambda_function" {
 
 
 
-  allowed_triggers = {
+  /* allowed_triggers = {
     APIGatewayAny = {
       service    = "apigateway"
       arn = data.aws_apigatewayv2_api.cataprato_api.arn
     }
-  }
+  } */
 
   create_lambda_function_url = true
   authorization_type         = "AWS_IAM"
