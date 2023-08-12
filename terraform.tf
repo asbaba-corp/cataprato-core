@@ -18,7 +18,7 @@ provider "aws" {
   skip_metadata_api_check     = true
   skip_region_validation      = true
   skip_credentials_validation = true
-  skip_requesting_account_id  = true
+  skip_requesting_account_id  = false
 }
 
 
@@ -50,22 +50,16 @@ module "lambda_function" {
     module.lambda_layer_s3.lambda_layer_arn,
   ] 
 
- /*  environment_variables = {
-    Hello      = "World"
-    Serverless = "Terraform"
-  } */
-
   role_path   = "/tf-managed/"
   policy_path = "/tf-managed/"
 
 
-
-  /* allowed_triggers = {
+   allowed_triggers = {
     APIGatewayAny = {
       service    = "apigateway"
-      arn = data.aws_apigatewayv2_api.cataprato_api.arn
+      source_arn = data.aws_apigatewayv2_api.cataprato_api.execution_arn
     }
-  } */
+  } 
 
   create_lambda_function_url = true
   authorization_type         = "AWS_IAM"
@@ -98,9 +92,9 @@ module "lambda_function" {
     delete = "20m"
   }
 
- /*  tags = {
-    Module = "lambda1"
-  } */
+   tags = {
+    Deployment = "terraform"
+  } 
 }
 
  module "lambda_layer_s3" {
@@ -122,6 +116,10 @@ module "lambda_function" {
   ]
   store_on_s3 = true
   s3_bucket   = module.s3_bucket.s3_bucket_id
+
+  tags = {
+    Deployment = "terraform"
+  } 
 } 
 
 
@@ -142,6 +140,10 @@ module "s3_bucket" {
   versioning = {
     enabled = true
   }
+
+  tags = {
+    Deployment = "terraform"
+  } 
 }
 data "aws_apigatewayv2_api" "cataprato_api" {
   api_id = one(data.aws_apigatewayv2_apis.cataprato.ids)
