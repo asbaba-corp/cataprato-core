@@ -1,7 +1,23 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DynamoService } from '../../../database/dynamodb/dynamo.service';
 import { Recipe } from '../entities/recipe.entity';
-import { ScanCommand, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { ScanCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { PutItemCommand } from '@aws-sdk/client-dynamodb';
+
+interface DynamoDbRecipe {
+  id: {
+    S: string;
+  };
+  creator_id: {
+    S: string;
+  };
+  name: {
+    S: string;
+  };
+  ingredients: {
+    SS: string[];
+  };
+}
 
 @Injectable()
 export class RecipeRepository {
@@ -23,14 +39,13 @@ export class RecipeRepository {
   }
 
   async create(recipe: Recipe) {
-    const result = await this.dynamo.client.send(
-      new PutCommand({
-        TableName: this.tableName,
-        Item: { ...recipe },
-      }),
-    );
+    const params = {
+      TableName: this.tableName,
+      Item: this.serializeRecipeToDynamodbFormat(recipe),
+    };
+    const command = new PutItemCommand(params);
 
-    return result;
+    return this.dynamo.client.send(command);
   }
 
   async findOne(id: string) {
@@ -41,5 +56,22 @@ export class RecipeRepository {
       }),
     );
     return result.Item;
+  }
+
+  private serializeRecipeToDynamodbFormat(recipe: Recipe) {
+    return {
+      id: {
+        S: recipe.id,
+      },
+      creator_id: {
+        S: recipe.creator,
+      },
+      ingredients: {
+        SS: [...recipe.ingredients],
+      },
+      name: {
+        S: recipe.name,
+      },
+    };
   }
 }

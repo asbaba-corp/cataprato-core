@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { RecipeRepository } from './repositories/ingredients.repository';
-import { Recipe } from './entities/recipe.entity';
+import { RecipeRepository } from './repositories/recipe.repository';
+import { RecipeEntity } from './entities/recipe.entity';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { IngredientValidator } from './validators/ingredient.validator';
 
@@ -13,19 +13,19 @@ export class RecipeService {
 
   async create(payload: CreateRecipeDto) {
     await this.ingredientValidator.validate(payload.ingredients);
-    const newIngredient = Recipe.build(payload);
-    const ingredient = await this.recipeRepository.create(newIngredient);
+    const newRecipe = RecipeEntity.build(payload);
+    const recipe = await this.recipeRepository.create(newRecipe);
 
-    return ingredient;
+    return recipe;
   }
 
   async findAll() {
-    const ingredients = await this.recipeRepository.findAll();
-    return ingredients;
+    const recipes = await this.recipeRepository.findAll();
+    return recipes;
   }
 
   async findOne(id: string) {
-    const ingredient = await this.recipeRepository.findOne(id);
-    return ingredient;
+    const recipe = await this.recipeRepository.findOne(id);
+    return recipe;
   }
 }

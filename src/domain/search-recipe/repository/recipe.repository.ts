@@ -1,11 +1,7 @@
-import { ScanCommand } from '@aws-sdk/client-dynamodb';
+import { ExecuteStatementCommand } from '@aws-sdk/client-dynamodb';
 import { DynamoService } from '../../../database/dynamodb/dynamo.service';
 import { Injectable } from '@nestjs/common';
-import { mapToObject } from '../../../common/transformers';
-import {
-  SearchRecipeQueryDTO,
-  SearchRecipesFilters,
-} from '../dto/search-recipe-query.dto';
+import { SearchRecipesFilters } from '../dto/search-recipe-query.dto';
 
 @Injectable()
 export class RecipeRepository {
@@ -16,20 +12,24 @@ export class RecipeRepository {
     ingredients: string[],
     filters?: SearchRecipesFilters,
   ) {
-    const expAttributeValues = new Map();
-    const filterExpression = ingredients.map((id, index) => {
-      const key = `:ingredient${index}`;
-      expAttributeValues.set(key, { S: id });
-      return `contains(recipe.ingredients, ${key})`;
-    });
-    const conditionalExpression = ` ${filters?.includes ? ' AND ' : ' OR '} `;
+    const logicalOperator = filters?.includes ? ' AND ' : ' OR ';
+
+    const conditions = ingredients
+      .map((ingredient) => `contains(ingredients, '${ingredient}')`)
+      .join(logicalOperator);
+
+    const parameters = ingredients.map((ingredient) => ({ S: ingredient }));
+
+    const statement = `SELECT * FROM ${this.tableName} WHERE ${conditions}`;
+
+    console.log(statement);
     const allRecipes = await this.dynamo.client.send(
-      new ScanCommand({
-        TableName: this.tableName,
-        FilterExpression: filterExpression.join(conditionalExpression),
-        ExpressionAttributeValues: mapToObject(expAttributeValues),
+      new ExecuteStatementCommand({
+        Statement: statement,
+        Parameters: parameters,
       }),
     );
+
     return allRecipes.Items;
   }
 }

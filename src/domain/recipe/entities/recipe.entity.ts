@@ -1,17 +1,19 @@
 import { randomUUID } from 'crypto';
 import { CreateRecipeDto } from '../dto/create-recipe.dto';
-import { Ingredient } from '../../ingredients/entities/ingredient.entity';
 
-export class Recipe {
+export class RecipeEntity {
   id: string;
-  ingredients: Ingredient[];
+  ingredients: string[];
   name: string;
   creator: string;
   private constructor(private readonly recipe: CreateRecipeDto) {
     this.id = randomUUID();
+    Object.assign(this, recipe);
   }
 
   static build(recipe: CreateRecipeDto) {
-    return new Recipe(recipe);
+    return new RecipeEntity(recipe);
   }
 }
+
+export type Recipe = RecipeEntity;

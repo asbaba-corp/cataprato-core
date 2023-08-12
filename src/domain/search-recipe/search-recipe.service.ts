@@ -14,14 +14,14 @@ export class SearchRecipeService {
       filters,
     );
 
-    return recipes.map(this.deserializeRecipe);
+    return recipes;
   }
   private deserializeRecipe(data: any) {
     return {
       id: data.id.S,
-      name: data.recipe.M.name.S,
-      ingredient: data.recipe.M.ingredients.L.map((item: any) => item.S),
-      creator: data.recipe.M.creator.S,
+      name: data.name.S,
+      ingredient: data.ingredients.SS.map((item: any) => item),
+      creator: data.creator.S,
     };
   }
 }
