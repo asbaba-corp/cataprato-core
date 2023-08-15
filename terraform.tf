@@ -72,18 +72,21 @@ module "lambda_function" {
     max_age           = 86400
   }
   invoke_mode = "RESPONSE_STREAM"
-
+  attach_policy_statements = true
   policy_statements = {
     dynamodb = {
       effect    = "Allow",
-      actions   = ["dynamodb:BatchWriteItem"],
-      resources = ["arn:aws:dynamodb:us-east-1:`${data.aws_caller_identity.current.account_id}`:table/Test"]
+      actions   = [
+        "dynamodb:BatchGetItem",
+    				"dynamodb:GetItem",
+    				"dynamodb:Query",
+    				"dynamodb:Scan",
+    				"dynamodb:BatchWriteItem",
+    				"dynamodb:PutItem",
+    				"dynamodb:UpdateItem"
+],
+      resources = ["${data.aws_dynamodb_table.recipes.arn}", "${data.aws_dynamodb_table.ingredients.arn}"]
     },
-    s3_read = {
-      effect    = "Deny",
-      actions   = ["s3:HeadObject", "s3:GetObject"],
-      resources = ["arn:aws:s3:::my-bucket/*"]
-    }
   }
 
   timeouts = {
@@ -145,9 +148,19 @@ module "s3_bucket" {
     Deployment = "terraform"
   } 
 }
+
+data "aws_dynamodb_table" "ingredients" {
+  name = "Ingredients"
+}
+
+data "aws_dynamodb_table" "recipes" {
+  name = "Recipes"
+}
+
 data "aws_apigatewayv2_api" "cataprato_api" {
   api_id = one(data.aws_apigatewayv2_apis.cataprato.ids)
 }
+
 data "aws_apigatewayv2_apis" "cataprato"{
   protocol_type  = "HTTP"
 }
