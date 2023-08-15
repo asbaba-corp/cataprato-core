@@ -85,7 +85,7 @@ module "lambda_function" {
     				"dynamodb:PutItem",
     				"dynamodb:UpdateItem"
 ],
-      resources = [`${data.aws_dynamodb_table.recipes}`, `${data.aws_dynamodb_table.ingredients}`]
+      resources = ["${data.aws_dynamodb_table.recipes}", "${data.aws_dynamodb_table.ingredients}"]
     },
   }
 
