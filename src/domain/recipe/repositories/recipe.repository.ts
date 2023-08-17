@@ -14,9 +14,10 @@ interface DynamoDbRecipe {
   name: {
     S: string;
   };
-  ingredients: {
-    SS: string[];
-  };
+  ingredients: Set<string>;
+  created_at: {
+    S: string
+  }
 }
 
 @Injectable()
@@ -31,7 +32,7 @@ export class RecipeRepository {
           TableName: this.tableName,
         }),
       );
-      return result.Items;
+      return result.Items.map(this.deserializeRecipeFromDynamodbFormat);
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException();
@@ -73,8 +74,19 @@ export class RecipeRepository {
         S: recipe.name,
       },
       created_at: {
-        S: recipe.createdAt.toISOString()
+        S: new Date().toISOString()
       }
     };
   }
+
+  private deserializeRecipeFromDynamodbFormat(dynamoRecipe: DynamoDbRecipe) {
+    return {
+        id: dynamoRecipe.id.S,
+        creator: dynamoRecipe.creator_id.S,
+        ingredients: [...dynamoRecipe.ingredients],
+        name: dynamoRecipe.name.S,
+        createdAt: dynamoRecipe.created_at
+          
+    };
+}
 }

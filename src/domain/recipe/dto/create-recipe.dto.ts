@@ -24,12 +24,4 @@ export class CreateRecipeDto {
     type: String,
   })
   creator: string;
-
-  @ApiProperty({
-    example: '',
-    type: Date,
-  })
-  @Transform(({value}) => toDate(value))
-  @IsDate()
-  createdAt: Date
 }
