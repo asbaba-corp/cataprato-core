@@ -6,7 +6,7 @@ export class RecipeEntity {
   ingredients: string[];
   name: string;
   creator: string;
-  createdAt?: Date
+  createdAt: Date;
   private constructor(private readonly recipe: CreateRecipeDto) {
     this.id = randomUUID();
     Object.assign(this, recipe);

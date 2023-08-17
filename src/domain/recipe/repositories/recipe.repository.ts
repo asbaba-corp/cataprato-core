@@ -74,7 +74,7 @@ export class RecipeRepository {
         S: recipe.name,
       },
       created_at: {
-        S: new Date().toISOString()
+        S: recipe.createdAt.toISOString()
       }
     };
   }
