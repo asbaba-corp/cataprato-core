@@ -77,13 +77,7 @@ module "lambda_function" {
     dynamodb = {
       effect    = "Allow",
       actions   = [
-        "dynamodb:BatchGetItem",
-    				"dynamodb:GetItem",
-    				"dynamodb:Query",
-    				"dynamodb:Scan",
-    				"dynamodb:BatchWriteItem",
-    				"dynamodb:PutItem",
-    				"dynamodb:UpdateItem"
+        "dynamodb:*"
 ],
       resources = ["${data.aws_dynamodb_table.recipes.arn}", "${data.aws_dynamodb_table.ingredients.arn}"]
     },
