@@ -1,4 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { IsDate,  } from 'class-validator';
+import { toDate } from '../../../common/transformers';
 
 export class CreateRecipeDto {
   @ApiProperty({
@@ -21,4 +24,12 @@ export class CreateRecipeDto {
     type: String,
   })
   creator: string;
+
+  @ApiProperty({
+    example: '',
+    type: Date,
+  })
+  @Transform(({value}) => toDate(value))
+  @IsDate()
+  createdAt: Date
 }
