@@ -31,7 +31,7 @@ module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "5.3.0"
 
-  function_name          = "cataprato-core-lambda"
+  function_name          = "core"
   description            = "Cataprato core"
   handler                = "lambda.handler"
   runtime                = "nodejs18.x"
